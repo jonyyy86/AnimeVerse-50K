@@ -1,1 +1,21 @@
 
+{
+  "name": "AnimeVerse 50K",
+  "short_name": "AnimeVerse",
+  "description": "Discover and organize thousands of anime.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#100b20",
+  "theme_color": "#100b20",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
+
