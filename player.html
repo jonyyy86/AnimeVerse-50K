@@ -1,1 +1,131 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100b20">
+<title>AnimeVerse Player</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#100b20;color:white;font-family:Arial}
+header{padding:20px;background:#19112d}
+h1{color:#c18aff;margin:0}
+main{padding:16px;max-width:850px;margin:auto}
+video{width:100%;background:black;border-radius:14px;max-height:65vh}
+input,select{width:100%;padding:14px;margin:8px 0;background:#211735;color:white;border:1px solid #49356a;border-radius:10px}
+button{padding:13px;background:#7138bd;color:white;border:0;border-radius:10px;margin:5px}
+label{display:block;margin-top:15px;color:#c18aff}
+</style>
+</head>
+<body>
+<header>
+<h1>AnimeVerse 50K</h1>
+<p>Anime Video Player</p>
+</header>
+<main>
+<h2 id="title">Now Playing</h2>
+<video id="video" controls playsinline></video>
+
+<label>Choose video format</label>
+<select id="format">
+<option value="auto">Automatic</option>
+<option value="mp4">MP4</option>
+<option value="hls">HLS (M3U8)</option>
+</select>
+
+<label>Video URL</label>
+<input id="url" type="url" placeholder="Paste an authorized MP4 or M3U8 URL">
+
+<button onclick="playVideo()">▶ Play Video</button>
+<button onclick="stopVideo()">■ Stop</button>
+
+<h2>Episode Selection</h2>
+<select id="episodes">
+<option value="">Select an episode</option>
+</select>
+
+<p id="status">Ready to play.</p>
+</main>
+
+<script>
+const video=document.getElementById("video");
+const urlInput=document.getElementById("url");
+const format=document.getElementById("format");
+const statusText=document.getElementById("status");
+let hls=null;
+
+function playVideo(){
+const url=urlInput.value.trim();
+if(!url){statusText.textContent="Enter a video URL first.";return;}
+
+if(!/^https?:\/\//i.test(url)){
+statusText.textContent="Please enter a valid HTTP or HTTPS URL.";
+return;
+}
+
+if(hls){hls.destroy();hls=null;}
+video.pause();
+video.removeAttribute("src");
+video.load();
+
+const isHls=format.value==="hls"||
+(format.value==="auto"&&/\.m3u8($|\?)/i.test(url));
+
+if(isHls&&Hls.isSupported()){
+hls=new Hls();
+hls.loadSource(url);
+hls.attachMedia(video);
+hls.on(Hls.Events.MANIFEST_PARSED,()=>{
+video.play().catch(()=>statusText.textContent="Press Play to start.");
+});
+hls.on(Hls.Events.ERROR,(event,data)=>{
+if(data.fatal)statusText.textContent="Unable to load this stream.";
+});
+}else if(isHls&&video.canPlayType("application/vnd.apple.mpegurl")){
+video.src=url;
+video.play().catch(()=>statusText.textContent="Press Play to start.");
+}else{
+video.src=url;
+video.play().catch(()=>statusText.textContent="Press Play to start.");
+}
+statusText.textContent="Loading video...";
+}
+
+function stopVideo(){
+video.pause();
+video.removeAttribute("src");
+video.load();
+if(hls){hls.destroy();hls=null;}
+statusText.textContent="Playback stopped.";
+}
+
+video.addEventListener("error",()=>{
+statusText.textContent="Video could not play. Check the URL or source permissions.";
+});
+
+function addEpisodes(episodes){
+const select=document.getElementById("episodes");
+select.innerHTML='<option value="">Select an episode</option>';
+episodes.forEach(ep=>{
+const option=document.createElement("option");
+option.value=ep.url;
+option.textContent=ep.title;
+select.appendChild(option);
+});
+}
+
+document.getElementById("episodes").addEventListener("change",e=>{
+if(e.target.value){
+urlInput.value=e.target.value;
+playVideo();
+}
+});
+
+// Add authorized episode URLs here when available.
+addEpisodes([]);
+</script>
+</body>
+</html>
+
