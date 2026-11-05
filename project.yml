@@ -1,1 +1,22 @@
+name: AnimeVerse
 
+options:
+  bundleIdPrefix: com.smd
+  deploymentTarget:
+    iOS: "16.0"
+
+targets:
+  AnimeVerse:
+    type: application
+    platform: iOS
+    sources:
+      - AnimeVerse
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.smd.sm64ios
+        PRODUCT_NAME: AnimeVerse
+        INFOPLIST_KEY_CFBundleDisplayName: AnimeVerse 50K
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        SWIFT_VERSION: 5.0
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGNING_ALLOWED: NO
